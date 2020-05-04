@@ -1,0 +1,18 @@
+kind: Module
+description: The API backend for password resets
+type: helm
+name: password-reset
+base: base-chart
+serviceResource:
+  containerModule: password-reset-image
+dependencies:
+  - db-init
+values:
+  name: password-reset
+  image:
+    repository: ${modules.password-reset-image.outputs.deployment-image-name}
+    tag: ${modules.password-reset-image.version}
+  ingress:
+    enabled: true
+    paths: [/]
+    hosts: [api.local.app.garden]

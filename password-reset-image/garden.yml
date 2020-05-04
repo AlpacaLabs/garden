@@ -1,0 +1,7 @@
+kind: Module
+description: Image for the API backend that initiates and performs password resets
+type: container
+name: password-reset-image
+repositoryUrl: https://github.com/AlpacaLabs/password-reset.git#master
+buildArgs:
+  SSH_PRIVATE_KEY: ${var.ssh_private_key}

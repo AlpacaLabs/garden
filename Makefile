@@ -7,6 +7,8 @@ NC    := \033[0m
 
 ALPACA_DIR ?= $(shell dirname $(shell pwd))
 
+SERVICES := account-confirmation auth hermes mfa password-reset
+
 .PHONY: all
 all:
 	$(MAKE) update
@@ -22,4 +24,16 @@ test:
 
 .PHONY: link
 link:
-	garden link module password-reset-image $(ALPACA_DIR)/password-reset
+	@for service in ${SERVICES} ; do \
+	  echo "${BLUE}✓ Linking $$service!${NC}\n" ; \
+	  garden link module $$service-image $(ALPACA_DIR)/$$service ; \
+	  echo "${GREEN}✓ Linked $$service!${NC}\n" ; \
+	done
+
+.PHONY: clone
+clone:
+	@for service in ${SERVICES} ; do \
+	  echo "${BLUE}✓ Cloning $$service!${NC}\n" ; \
+	  @git clone git@github.com:AlpacaLabs/$$service.git $(ALPACA_DIR) || true ; \
+	  echo "${GREEN}✓ Cloned $$service!${NC}\n" ; \
+	done

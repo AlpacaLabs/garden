@@ -14,7 +14,7 @@ tasks:
     # sleep for a while.
     # https://github.com/CrunchyData/crunchy-containers/issues/653
     args: [
-      "sleep 15 && psql -w -U postgres --host=password-reset-db --port=5432 -d postgres -c 'CREATE TABLE IF NOT EXISTS votes (id VARCHAR(255) NOT NULL UNIQUE, vote VARCHAR(255) NOT NULL, created_at timestamp default NULL)'"
+      "sleep 15 && psql -w -U postgres --host=password-reset-db --port=5432 -d postgres -c 'CREATE TABLE password_reset_code (code uuid PRIMARY KEY, created_timestamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, expiration_timestamp timestamp NOT NULL, stale boolean NOT NULL, used boolean NOT NULL, account_id varchar(20) NOT NULL) WITH (OIDS=FALSE)'"
     ]
     env:
       PGPASSWORD: postgres
@@ -28,7 +28,7 @@ tasks:
       --host, password-reset-db,
       --port=5432,
       -d, postgres,
-      -c, "TRUNCATE votes"
+      -c, "TRUNCATE password_reset_code"
     ]
     env:
       PGPASSWORD: postgres

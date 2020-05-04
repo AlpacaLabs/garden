@@ -8,7 +8,7 @@ serviceResource:
   kind: StatefulSet
   name: password-reset-db
 tasks:
-  - name: db-init
+  - name: password-reset-db-init
     command: [/bin/sh, -c]
     # The postgres health check appears to go through before the server accepts remote connections, so we need to
     # sleep for a while.
@@ -20,7 +20,7 @@ tasks:
       PGPASSWORD: postgres
     dependencies:
       - password-reset-db
-  - name: db-clear
+  - name: password-reset-db-clear
     args: [
       psql,
       -w,

@@ -22,6 +22,12 @@ tests:
     timeout: 60
     dependencies:
       - kafka
+      - api-account-db-clear
+      - api-account-db-init
     env:
       KAFKA_HOST: kafka
       KAFKA_PORT: 9092
+      DB_HOST: api-account-db
+      DB_NAME: postgres
+      DB_USER: postgres
+      DB_PASS: postgres

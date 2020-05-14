@@ -24,6 +24,12 @@ tests:
     dependencies:
       - kafka
       - api-account
+      - api-mfa-db-clear
+      - api-mfa-db-init
     env:
       KAFKA_HOST: kafka
       KAFKA_PORT: 9092
+      DB_HOST: api-mfa-db
+      DB_NAME: postgres
+      DB_USER: postgres
+      DB_PASS: postgres

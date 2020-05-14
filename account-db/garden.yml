@@ -1,0 +1,42 @@
+kind: Module
+description: Postgres database for the account API
+type: helm
+name: api-account-db
+repo: https://charts.bitnami.com/bitnami
+chart: postgresql
+version: 8.9.6
+serviceResource:
+  kind: StatefulSet
+  name: api-account-db
+tasks:
+  - name: api-account-db-init
+    command: [/bin/sh, -c]
+    # The postgres health check appears to go through before the server accepts remote connections, so we need to
+    # sleep for a while.
+    # https://github.com/CrunchyData/crunchy-containers/issues/653
+    args: [
+      "sleep 15 && psql -w -U postgres --host=api-account-db --port=5432 -d postgres -c 'CREATE TABLE IF NOT EXISTS account (id varchar(20) PRIMARY KEY, username varchar(25), primary_email_address_id varchar(20)) WITH (OIDS=FALSE); CREATE TABLE IF NOT EXISTS email_address (id varchar(20) PRIMARY KEY, account_id varchar(20) NOT NULL, email_address varchar, confirmed boolean NOT NULL) WITH (OIDS=FALSE); CREATE TABLE IF NOT EXISTS phone_number (id varchar(20) PRIMARY KEY, account_id varchar(20) NOT NULL, phone_number varchar, confirmed boolean NOT NULL) WITH (OIDS=FALSE); CREATE TABLE IF NOT EXISTS email_address_txob (email_address_id varchar(20) PRIMARY KEY, sent boolean NOT NULL) WITH (OIDS=FALSE); CREATE TABLE IF NOT EXISTS phone_number_txob (phone_number_id varchar(20) PRIMARY KEY, sent boolean NOT NULL) WITH (OIDS=FALSE);'"
+    ]
+    env:
+      PGPASSWORD: postgres
+    dependencies:
+      - api-account-db
+  - name: api-account-db-clear
+    args: [
+      psql,
+      -w,
+      -U, postgres,
+      --host, api-account-db,
+      --port=5432,
+      -d, postgres,
+      -c, "DROP TABLE IF EXISTS account; DROP TABLE IF EXISTS email_address; DROP TABLE IF EXISTS phone_number; DROP TABLE IF EXISTS email_address_txob; DROP TABLE IF EXISTS phone_number_txob;"
+    ]
+    env:
+      PGPASSWORD: postgres
+    dependencies:
+      - api-account-db
+values:
+  # This is a more digestable name than the default one in the template
+  fullnameOverride: api-account-db
+  # This should of course not be used in production
+  postgresqlPassword: postgres

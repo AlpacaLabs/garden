@@ -1,0 +1,7 @@
+kind: Module
+description: Image for the API backend that manages account identifiers, such as email addresses, phone numbers, and usernames.
+type: container
+name: api-account-image
+repositoryUrl: https://github.com/AlpacaLabs/api-account.git#master
+buildArgs:
+  SSH_PRIVATE_KEY: ${var.ssh_private_key}

@@ -1,5 +1,5 @@
 kind: Module
-description: The API backend for message delivery
+description: The API backend that handles multi-factor authentication
 type: helm
 name: api-mfa
 base: base-chart
@@ -7,6 +7,7 @@ serviceResource:
   containerModule: api-mfa-image
 dependencies:
   - kafka
+  - api-account
 values:
   name: api-mfa
   image:
@@ -22,6 +23,7 @@ tests:
     timeout: 60
     dependencies:
       - kafka
+      - api-account
     env:
       KAFKA_HOST: kafka
       KAFKA_PORT: 9092

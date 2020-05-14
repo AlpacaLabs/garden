@@ -1,5 +1,5 @@
 kind: Module
-description: Postgres database for the password API
+description: Postgres database for the MFA API
 type: helm
 name: api-mfa-db
 repo: https://charts.bitnami.com/bitnami

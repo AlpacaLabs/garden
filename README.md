@@ -25,7 +25,9 @@ make clone
 By default, this Garden configuration will use services as they exist in `master`.
 
 If you want to do iterative development locally, you'll need to use the "garden link" command.
-
+This will allow you to make experimental code changes in different repos in different directories from this one,
+and Garden will automatically build and deploy and re-run tests/tasks.
+ 
 You should only need to run this once.
 ```bash
 make link
@@ -33,9 +35,15 @@ make link
 
 ### Use Garden
 ```bash
+# Update remote modules (you don't need to do this if you've run the link command)
+make update
+
 # Watch for changes
 garden dev
 
 # Run all tests
 garden test
+
+# Run tests for password API, forcefully, watching for changes
+garden test --name=integ-password --force --watch
 ```

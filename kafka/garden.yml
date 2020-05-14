@@ -1,0 +1,10 @@
+kind: Module
+description: Apache Kafka
+type: helm
+name: kafka
+repo: https://charts.bitnami.com/bitnami
+chart: kafka
+version: 10.3.3
+serviceResource:
+  kind: StatefulSet
+  name: kafka

@@ -1,0 +1,42 @@
+kind: Module
+description: Postgres database for the password API
+type: helm
+name: api-password-db
+repo: https://charts.bitnami.com/bitnami
+chart: postgresql
+version: 8.9.6
+serviceResource:
+  kind: StatefulSet
+  name: api-password-db
+tasks:
+  - name: api-password-db-init
+    command: [/bin/sh, -c]
+    # The postgres health check appears to go through before the server accepts remote connections, so we need to
+    # sleep for a while.
+    # https://github.com/CrunchyData/crunchy-containers/issues/653
+    args: [
+      "sleep 15 && psql -w -U postgres --host=api-password-db --port=5432 -d postgres -c 'CREATE TABLE IF NOT EXISTS password_reset_code (id varchar(20) PRIMARY KEY, code varchar NOT NULL, created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, expires_at timestamp NOT NULL, stale boolean NOT NULL, used boolean NOT NULL, account_id varchar(20) NOT NULL) WITH (OIDS=FALSE)'"
+    ]
+    env:
+      PGPASSWORD: postgres
+    dependencies:
+      - api-password-db
+  - name: api-password-db-clear
+    args: [
+      psql,
+      -w,
+      -U, postgres,
+      --host, api-password-db,
+      --port=5432,
+      -d, postgres,
+      -c, "DROP TABLE IF EXISTS password_reset_code"
+    ]
+    env:
+      PGPASSWORD: postgres
+    dependencies:
+      - api-password-db
+values:
+  # This is a more digestable name than the default one in the template
+  fullnameOverride: api-password-db
+  # This should of course not be used in production
+  postgresqlPassword: postgres

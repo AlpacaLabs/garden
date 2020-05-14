@@ -1,0 +1,31 @@
+kind: Module
+description: The API backend for password authentication and password resets
+type: helm
+name: api-password
+base: base-chart
+serviceResource:
+  containerModule: api-password-image
+dependencies:
+  - api-password-db-clear
+  - api-password-db-init
+values:
+  name: api-password
+  image:
+    repository: ${modules.api-password-image.outputs.deployment-image-name}
+    tag: ${modules.api-password-image.version}
+  ingress:
+    enabled: true
+    paths: [/]
+    hosts: [api.local.app.garden]
+tests:
+  - name: integ-password
+    args: [go, test, -v, ./...]
+    timeout: 60
+    dependencies:
+      - api-password-db-clear
+      - api-password-db-init
+    env:
+      DB_HOST: api-password-db
+      DB_NAME: postgres
+      DB_USER: postgres
+      DB_PASS: postgres

@@ -1,0 +1,14 @@
+kind: Module
+description: End-to-end tests
+name: e2e
+repositoryUrl: https://github.com/AlpacaLabs/e2e.git#master
+type: container
+#hotReload:
+#  sync:
+#    - target: /app/src
+#      source: src
+tests:
+  - name: e2e
+    args: [go, test, -v, ./...]
+    dependencies:
+      - api-account

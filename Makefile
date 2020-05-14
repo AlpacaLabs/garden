@@ -24,6 +24,7 @@ test:
 
 .PHONY: link
 link:
+	garden link module e2e $(ALPACA_DIR)/e2e
 	@for service in ${SERVICES} ; do \
 	  echo "${BLUE}✓ Linking $$service!${NC}\n" ; \
 	  garden link module $$service-image $(ALPACA_DIR)/$$service ; \
@@ -32,6 +33,7 @@ link:
 
 .PHONY: clone
 clone:
+	git clone git@github.com:AlpacaLabs/e2e.git $(ALPACA_DIR) || true
 	@for service in ${SERVICES} ; do \
 	  echo "${BLUE}✓ Cloning $$service!${NC}\n" ; \
 	  @git clone git@github.com:AlpacaLabs/$$service.git $(ALPACA_DIR) || true ; \

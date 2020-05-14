@@ -7,7 +7,7 @@ NC    := \033[0m
 
 ALPACA_DIR ?= $(shell dirname $(shell pwd))
 
-SERVICES := api-hermes api-password
+SERVICES := api-hermes api-mfa api-password
 
 .PHONY: all
 all:

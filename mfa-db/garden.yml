@@ -1,0 +1,42 @@
+kind: Module
+description: Postgres database for the password API
+type: helm
+name: api-mfa-db
+repo: https://charts.bitnami.com/bitnami
+chart: postgresql
+version: 8.9.6
+serviceResource:
+  kind: StatefulSet
+  name: api-mfa-db
+tasks:
+  - name: api-mfa-db-init
+    command: [/bin/sh, -c]
+    # The postgres health check appears to go through before the server accepts remote connections, so we need to
+    # sleep for a while.
+    # https://github.com/CrunchyData/crunchy-containers/issues/653
+    args: [
+      "sleep 15 && psql -w -U postgres --host=api-mfa-db --port=5432 -d postgres -c 'CREATE TABLE IF NOT EXISTS mfa_code (id varchar(20) PRIMARY KEY, code varchar NOT NULL, created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, expires_at timestamp NOT NULL, stale boolean NOT NULL, used boolean NOT NULL, account_id varchar(20) NOT NULL) WITH (OIDS=FALSE); CREATE TABLE IF NOT EXISTS mfa_code_txob (code_id varchar(20) PRIMARY KEY, sent boolean NOT NULL, email_address_id varchar(20), phone_number_id varchar(20)) WITH (OIDS=FALSE); CREATE TABLE IF NOT EXISTS account (id varchar(20) PRIMARY KEY, mfa_required boolean NOT NULL) WITH (OIDS=FALSE);'"
+    ]
+    env:
+      PGPASSWORD: postgres
+    dependencies:
+      - api-mfa-db
+  - name: api-mfa-db-clear
+    args: [
+      psql,
+      -w,
+      -U, postgres,
+      --host, api-mfa-db,
+      --port=5432,
+      -d, postgres,
+      -c, "DROP TABLE IF EXISTS mfa_code; DROP TABLE IF EXISTS mfa_code_txob; DROP TABLE IF EXISTS account;"
+    ]
+    env:
+      PGPASSWORD: postgres
+    dependencies:
+      - api-mfa-db
+values:
+  # This is a more digestable name than the default one in the template
+  fullnameOverride: api-mfa-db
+  # This should of course not be used in production
+  postgresqlPassword: postgres

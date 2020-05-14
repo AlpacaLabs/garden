@@ -1,0 +1,7 @@
+kind: Module
+description: Image for the API backend that handles multi-factor authentication
+type: container
+name: api-mfa-image
+repositoryUrl: https://github.com/AlpacaLabs/api-mfa.git#master
+buildArgs:
+  SSH_PRIVATE_KEY: ${var.ssh_private_key}

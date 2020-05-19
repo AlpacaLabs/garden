@@ -3,3 +3,11 @@ description: Image for the API backend that handles multi-factor authentication
 type: container
 name: api-mfa-image
 repositoryUrl: https://github.com/AlpacaLabs/api-mfa.git#master
+hotReload:
+  sync:
+    - target: /go/app/
+services:
+  - name: api-mfa-image
+    ports:
+      - name: grpc
+        containerPort: 8081

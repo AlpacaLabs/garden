@@ -3,5 +3,3 @@ description: Image for the API backend for password authentication and password 
 type: container
 name: api-password-image
 repositoryUrl: https://github.com/AlpacaLabs/api-password.git#master
-buildArgs:
-  SSH_PRIVATE_KEY: ${var.ssh_private_key}

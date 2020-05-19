@@ -12,5 +12,3 @@ tests:
     args: [go, test, -v, ./...]
     dependencies:
       - api-account
-buildArgs:
-  SSH_PRIVATE_KEY: ${var.ssh_private_key}
